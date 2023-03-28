@@ -5,13 +5,14 @@ import java.util.List;
 import com.fasterxml.jackson.annotation.JsonIdentityInfo;
 import com.fasterxml.jackson.annotation.JsonIdentityReference;
 import com.fasterxml.jackson.annotation.ObjectIdGenerators;
-
 import jakarta.persistence.CascadeType;
+import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.OneToMany;
+
 
 @Entity
 @JsonIdentityInfo(   generator = ObjectIdGenerators.PropertyGenerator.class,
@@ -19,7 +20,8 @@ import jakarta.persistence.OneToMany;
 public class Meeting {
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
-	private int id;
+	@Column(name = "id", unique = true)
+	private Integer id;
 
 	private String title;
 	private Date start;
@@ -35,23 +37,23 @@ public class Meeting {
 	@JsonIdentityReference(alwaysAsId = true)
 	private List<Member> members;
 
-	public Meeting() {
-		super();
-	}
+//	public Meeting() {
+//		super();
+//	}
 
 	
-	public Meeting(int id, String title, Date start, Date end, String loc, String organiser, String link,
-			List<Member> members) {
-		super();
-		this.id = id;
-		this.title = title;
-		this.start = start;
-		this.end = end;
-		this.loc = loc;
-		this.organiser = organiser;
-		this.link = link;
-		this.members = members;
-	}
+//	public Meeting(int id, String title, Date start, Date end, String loc, String organiser, String link,
+//			List<Member> members) {
+//		super();
+//		this.id = id;
+//		this.title = title;
+//		this.start = start;
+//		this.end = end;
+//		this.loc = loc;
+//		this.organiser = organiser;
+//		this.link = link;
+//		this.members = members;
+//	}
 
 
 	public int getId() {

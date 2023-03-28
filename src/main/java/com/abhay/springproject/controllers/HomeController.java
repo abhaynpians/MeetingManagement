@@ -22,8 +22,10 @@ import com.abhay.springproject.Entity.Meeting;
 import com.abhay.springproject.Entity.Member;
 import com.abhay.springproject.Entity.User;
 import com.abhay.springproject.dto.AuthRequest;
+import com.abhay.springproject.dto.ChangePass;
 import com.abhay.springproject.dto.DeactReq;
 import com.abhay.springproject.dto.ListReq;
+import com.abhay.springproject.dto.MeetingList;
 import com.abhay.springproject.repository.MeetingRepository;
 import com.abhay.springproject.repository.UserRepository;
 import com.abhay.springproject.services.JwtService;
@@ -63,6 +65,22 @@ public class HomeController {
 			throw new UsernameNotFoundException("invalid user request !");
 		}
 	}
+	
+	@PostMapping("/changePassword")
+	@ResponseBody
+	public String changePassword(@RequestBody ChangePass request) {
+		User user = userRepository.findById(request.getId()).orElse(null);
+		Authentication authentication = authenticationManager.authenticate(new UsernamePasswordAuthenticationToken(user.getEmail(), request.getOldPassword()));
+		
+		System.out.println("Inside Change Pass");
+		if(authentication.isAuthenticated()) {
+			user.setPassword(bcrypt.encode(request.getNewPassword()));
+			userRepository.save(user);
+			return "Password Changed";
+		}
+		return "Password Not Changed";
+	}
+	
 
 	@PostMapping("/adduser")
 	@PreAuthorize("hasAuthority('ROLE_ADMIN')")
@@ -120,6 +138,16 @@ public class HomeController {
 		}
 		request.setMembers(mem);
 	   return  meetingRepository.save(request);
+	}
+	
+	@PostMapping("/meetingList")
+	@ResponseBody
+	public List<Meeting> meetingList(@RequestBody MeetingList request) {
+		System.out.println("Inside List");
+		
+		return meetingRepository.getList(request.getStart(), request.getEnd());
+		
+		
 	}
 	
 	

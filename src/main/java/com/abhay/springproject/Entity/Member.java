@@ -34,16 +34,16 @@ public class Member {
 		this.meeting = meeting;
 	}
 
-	public Member() {
-		super();
-	}
+//	public Member() {
+//		super();
+//	}
 
-	public Member(int mid, String mname, Meeting meeting) {
-		super();
-		this.mid = mid;
-		this.mname = mname;
-		this.meeting = meeting;
-	}
+//	public Member(int mid, String mname, Meeting meeting) {
+//		super();
+//		this.mid = mid;
+//		this.mname = mname;
+//		this.meeting = meeting;
+//	}
 
 	public int getMid() {
 		return mid;
