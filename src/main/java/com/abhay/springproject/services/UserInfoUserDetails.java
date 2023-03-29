@@ -4,15 +4,14 @@ import java.util.Arrays;
 import java.util.Collection;
 import java.util.List;
 import java.util.stream.Collectors;
-
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
-
 import com.abhay.springproject.Entity.User;
 
+
 public class UserInfoUserDetails implements UserDetails {
- 
+     
 	private String name;
 	private String password;
 	private List<GrantedAuthority> authorities;
@@ -33,7 +32,7 @@ public class UserInfoUserDetails implements UserDetails {
 
 	@Override
 	public String getPassword() {
-		// TODO Auto-generated method stub
+		// TODO Auto-generated method stub.
 		return password;
 	}
 

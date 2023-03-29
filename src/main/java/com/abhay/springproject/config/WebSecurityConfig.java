@@ -20,15 +20,17 @@ import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
-
 import com.abhay.springproject.filter.JwtAuthFilter;
 import com.abhay.springproject.services.UserDetailServiceImpl;
-import com.abhay.springproject.services.UserInfoUserDetails;
 
 @Configuration
 @EnableWebSecurity
 @EnableMethodSecurity
 public class WebSecurityConfig {
+	
+	
+
+	
 
 	@Autowired
 	private JwtAuthFilter authFilter;
@@ -42,19 +44,20 @@ public class WebSecurityConfig {
 	public BCryptPasswordEncoder bCryptPasswordEncoder() {
 		return new BCryptPasswordEncoder();
 	}
+	
 
 	@Bean
 	public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
 
-		return http.csrf().disable().authorizeHttpRequests().requestMatchers("index.html", "/ ", "/admin/login","/admin/meetingList","/admin/changePassword")
+		return http.csrf().disable().authorizeHttpRequests().requestMatchers("index.html", "/ ", "/admin/login")
 				.permitAll().and()
-				// .httpBasic().disable()
 
-				.authorizeHttpRequests().requestMatchers("/admin/**").hasRole("ADMIN").anyRequest()
-				.authenticated().and().sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS).and()
+				.authorizeHttpRequests().requestMatchers("/admin/**").hasAuthority("ROLE_ADMIN").anyRequest().authenticated()
+			//	.and()
+				//.authorizeHttpRequests().requestMatchers("/user/**").hasAuthority("ROLE_USER").anyRequest().authenticated()
+				.and().sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS).and()
 				.authenticationProvider(authenticationProvider())
-				.addFilterBefore(authFilter, UsernamePasswordAuthenticationFilter.class)
-				.build();
+				.addFilterBefore(authFilter, UsernamePasswordAuthenticationFilter.class).build();
 	}
 
 	@Bean
