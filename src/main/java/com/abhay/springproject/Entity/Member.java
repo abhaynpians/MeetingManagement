@@ -28,7 +28,5 @@ public class Member {
 	@JoinColumn(name = "mm_fk")
 	@JsonIdentityReference(alwaysAsId = true)
 	private Meeting meeting;
-
-
 	
 }

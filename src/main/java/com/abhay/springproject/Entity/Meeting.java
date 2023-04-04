@@ -1,6 +1,8 @@
 package com.abhay.springproject.Entity;
 
-import java.util.Date;
+import java.sql.Date;
+import java.sql.Timestamp;
+import java.time.LocalDateTime;
 import java.util.List;
 import com.fasterxml.jackson.annotation.JsonIdentityInfo;
 import com.fasterxml.jackson.annotation.JsonIdentityReference;
@@ -38,9 +40,10 @@ public class Meeting {
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	@Column(name = "id", unique = true)
 	private Integer id;
+	private int organiserId;
 	private String title;
-	private Date start;
-	private Date end;
+	private Timestamp start;
+	private Timestamp end;
 	private String loc;
 	private String organiser;
 	private String link;

@@ -1,7 +1,16 @@
 package com.abhay.springproject.controllers;
 
+import java.sql.Date;
+import java.sql.Timestamp;
+import java.text.DateFormat;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.List;
+import java.util.Optional;
+import java.util.TimeZone;
+
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
@@ -23,9 +32,12 @@ import com.abhay.springproject.dto.ChangePass;
 import com.abhay.springproject.dto.DeactReq;
 import com.abhay.springproject.dto.ListReq;
 import com.abhay.springproject.dto.MeetingList;
+import com.abhay.springproject.dto.TokenResponse;
+import com.abhay.springproject.filter.JwtAuthFilter;
 import com.abhay.springproject.repository.MeetingRepository;
 import com.abhay.springproject.repository.UserRepository;
 import com.abhay.springproject.services.JwtService;
+import com.abhay.springproject.services.MeetingService;
 
 @RestController
 public class HomeController {
@@ -41,19 +53,30 @@ public class HomeController {
 
 	@Autowired
 	JwtService jwtService;
+	
+//	@Autowired
+//	TokenResponse response;
+	
+	@Autowired
+	 JwtAuthFilter filter;
+	
+	@Autowired
+	MeetingService meetingService;
 
 	@Autowired
 	BCryptPasswordEncoder bcrypt;
 
 	@PostMapping("/admin/login")
 	@ResponseBody
-	public String login(@RequestBody AuthRequest request) {
+	public TokenResponse login(@RequestBody AuthRequest request) {
 
 		Authentication authentication = authenticationManager
 				.authenticate(new UsernamePasswordAuthenticationToken(request.getEmail(), request.getPassword()));
 
 		if (authentication.isAuthenticated()) {
-			return jwtService.generateToken(request.getEmail());
+			String token= jwtService.generateToken(request.getEmail());
+			User user = userRepository.getDataByMail(request.getEmail());
+			return new TokenResponse(token,user.getName(),user.getRole());
 		} else {
 			throw new UsernameNotFoundException("invalid user request !");
 		}
@@ -77,6 +100,7 @@ public class HomeController {
 		return "Password Not Changed";
 	}
 
+	
 	@PostMapping("/admin/adduser")
 	@PreAuthorize("hasAuthority('ROLE_ADMIN')")
 	@ResponseBody
@@ -127,12 +151,47 @@ public class HomeController {
 	@PreAuthorize("hasAuthority('ROLE_ADMIN')")
 	@ResponseBody
 	public String createmeeting(@RequestBody Meeting request) {
+		System.out.println("Inside Create Meeting");
+		
+		SimpleDateFormat dateFormate = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+		DateFormat inputFormat = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSSX");
+		dateFormate.setTimeZone(TimeZone.getTimeZone("UTC-5:30"));
+		/*
+		 * java.util.Date date; java.util.Date endDate;
+		 * 
+		 * String stringDate = request.getStart(); try { date =
+		 * inputFormat.parse(request.getStart()); endDate=
+		 * inputFormat.parse(request.getEnd()); String start = dateFormate.format(date);
+		 * String end = dateFormate.format(endDate);
+		 * 
+		 * request.setStart(start); request.setEnd(end);
+		 * 
+		 * 
+		 * } catch (ParseException e) { // TODO Auto-generated catch block
+		 * e.printStackTrace(); }
+		 */
+		 
+		
+		String username=meetingService.validateOrganiser(filter.getToken());
+		User user = userRepository.getDataByMail(username);
+		String name = user.getName();
+		request.setOrganiser(name);
+		request.setOrganiserId(user.getId());
+		boolean timevalidation=meetingService.validateMeetingTime(request.getStart(), request.getEnd(), user.getId());
+		if(!timevalidation) {
+			return "You can not create the Meeting in same time";
+		}
+		
+
+		
+		
 		List<Member> mem = request.getMembers();
 		for (Member val : mem) {
 			val.setMeeting(request);
 
 		}
-		request.setMembers(mem);
+		request.setMembers(mem); 
+		
 		meetingRepository.save(request);
 		return "Meeting Created";
 

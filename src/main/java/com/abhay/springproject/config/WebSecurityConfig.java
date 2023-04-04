@@ -52,7 +52,7 @@ public class WebSecurityConfig {
 		return http.csrf().disable().authorizeHttpRequests().requestMatchers("index.html", "/ ", "/admin/login")
 				.permitAll().and()
 
-				.authorizeHttpRequests().requestMatchers("/admin/**").hasAuthority("ROLE_ADMIN").anyRequest().authenticated()
+				.authorizeHttpRequests().requestMatchers("/admin/**").authenticated()
 			//	.and()
 				//.authorizeHttpRequests().requestMatchers("/user/**").hasAuthority("ROLE_USER").anyRequest().authenticated()
 				.and().sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS).and()
