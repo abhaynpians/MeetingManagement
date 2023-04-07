@@ -24,4 +24,5 @@ public class User {
 	private int phone;
 	private String designation;
 	private String role;
+	private String availability;
 }

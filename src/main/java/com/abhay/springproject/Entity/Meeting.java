@@ -45,6 +45,7 @@ public class Meeting {
 	private Timestamp start;
 	private Timestamp end;
 	private String loc;
+	private String meetingstatus;
 	private String organiser;
 	private String link;
 	@OneToMany(mappedBy = "meeting", cascade = CascadeType.ALL)
