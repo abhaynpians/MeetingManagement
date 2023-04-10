@@ -9,6 +9,7 @@ import org.springframework.stereotype.Component;
 import com.abhay.springproject.Entity.Meeting;
 import com.abhay.springproject.Entity.Member;
 import com.abhay.springproject.Entity.User;
+import com.abhay.springproject.dto.JoinMeeting;
 import com.abhay.springproject.dto.StartMeeting;
 import com.abhay.springproject.repository.MeetingRepository;
 import com.abhay.springproject.repository.UserRepository;
@@ -39,16 +40,36 @@ public class MeetingService {
 		Meeting meeting=meetingRepository.findById(request.getMeetingId()).orElse(null);
 		meeting.setMeetingstatus("Started");
 		List<Member> member = meeting.getMembers();
+		
 		/*
 		 * for (Member member2 : member) { //Send Notification that meeting is started }
 		 */
+		
 		User organiser = userRepository.findById(request.getOrganiserId()).orElse(null);
 		organiser.setAvailability("InMeeting");
 		
 		return true;
+	}
+	
+	public boolean joinMeeting(JoinMeeting request) {
+	Meeting meeting=	meetingRepository.findById(request.getMeetingId()).orElse(null);
+	List<Member> member = meeting.getMembers();
+	if((member.contains(request.getMemberId()) )&& (meeting.getMeetingstatus()=="Started") ) {
 		
+		//Join Meeting
+		User  user=userRepository.findById(request.getMemberId()).orElse(null);
+		user.setAvailability("InMeeting");
 		
 	}
+	 
+	
+	
+		
+		
+		return true;
+	}
+	
+	
 	
 	
 //	public boolean validateMember()
